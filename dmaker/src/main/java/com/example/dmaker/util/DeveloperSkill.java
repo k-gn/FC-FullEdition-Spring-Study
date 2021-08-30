@@ -1,4 +1,4 @@
-package com.example.dmaker.entity;
+package com.example.dmaker.util;
 
 import lombok.AllArgsConstructor;
 

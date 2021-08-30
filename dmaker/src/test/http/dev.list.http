@@ -1,0 +1,7 @@
+### Send POST request with json body
+GET http://localhost:8080/developers
+Content-Type: application/json
+
+{
+
+}

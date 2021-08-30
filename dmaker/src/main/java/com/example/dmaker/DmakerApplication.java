@@ -1,6 +1,5 @@
 package com.example.dmaker;
 
-import com.example.dmaker.entity.DeveloperLevel;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

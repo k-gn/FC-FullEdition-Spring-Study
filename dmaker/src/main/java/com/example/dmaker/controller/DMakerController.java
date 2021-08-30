@@ -1,13 +1,15 @@
 package com.example.dmaker.controller;
 
+import com.example.dmaker.dto.CreateDeveloper;
+import com.example.dmaker.dto.DeveloperDetailDto;
+import com.example.dmaker.dto.DeveloperDto;
+import com.example.dmaker.dto.EditDeveloper;
 import com.example.dmaker.service.DeveloperService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Collections;
+import javax.validation.Valid;
 import java.util.List;
 
 // 빈 등록 (컴포넌트 - 최소한의 단위)
@@ -23,22 +25,46 @@ public class DMakerController {
 
     // GET /developers HTTP/1.1
     @GetMapping("/developers")
-    public List<String> getAllDevelopers() {
+    // entity 를 리턴하는건 좋지 않은 패턴
+    // 불필요한 정보가 나갈 수 있고, 트랜잭션이 없는 상태에서 접근 시 문제가 발생할 수 있다.
+    // entity 와 응답 데이터를 분리해주는 것이 좋다.
+    public List<DeveloperDto> getAllDevelopers() {
 
         log.info("GET /developers HTTP/1.1");
 
-        return Arrays.asList("snow", "elsa", "olaf");
+        return developerService.getAllEmployedDevelopers();
     }
 
-    @GetMapping("/create-developers")
-    public List<String> createDevelopers() {
+    @GetMapping("/developer/{memberId}")
+    public DeveloperDetailDto getAllDeveloperDetail(@PathVariable String memberId) {
 
-        log.info("GET /create-developers HTTP/1.1");
+        log.info("GET /developer HTTP/1.1");
 
-        developerService.createDeveloper();
-
-        return Collections.singletonList("Olaf");
+        return developerService.getDeveloperDetail(memberId);
     }
+
+    @PostMapping("/create-developers")
+    public CreateDeveloper.Response createDevelopers(@Valid @RequestBody CreateDeveloper.Request request) {
+
+        log.info("POST /create-developers HTTP/1.1");
+        log.info("request : {}", request);
+
+        return developerService.createDeveloper(request);
+    }
+
+    @PutMapping("/developer/{memberId}")
+    public DeveloperDetailDto editDeveloper(@PathVariable String memberId, @Valid @RequestBody EditDeveloper.Request request) {
+
+        log.info("GET /developer HTTP/1.1");
+
+        return developerService.editDeveloper(memberId, request);
+    }
+
+    @DeleteMapping("/developer/{memberId}")
+    public DeveloperDetailDto deleteDeveloper(@PathVariable String memberId) {
+        return developerService.deleteDeveloper(memberId);
+    }
+
 }
 
 /*

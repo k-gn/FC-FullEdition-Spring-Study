@@ -1,8 +1,5 @@
 package com.example.dmaker.entity;
 
-import com.example.dmaker.code.StatusCode;
-import com.example.dmaker.util.DeveloperLevel;
-import com.example.dmaker.util.DeveloperSkill;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,25 +18,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Developer {
+public class RetiredDeveloper {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Enumerated(EnumType.STRING) // 자바 enum 타입을 엔티티 클래스의 속성으로 사용
-    private DeveloperLevel developerLevel;
-
-    @Enumerated(EnumType.STRING)
-    private DeveloperSkill developerSkill;
-
-    private Integer experienceYears;
     private String memberId;
     private String name;
-    private Integer age;
-
-    @Enumerated(EnumType.STRING)
-    private StatusCode statusCode;
 
     // auditing 설정
     @CreatedDate
