@@ -1,14 +1,14 @@
 package com.example.dmaker.controller;
 
-import com.example.dmaker.dto.CreateDeveloper;
-import com.example.dmaker.dto.DeveloperDetailDto;
-import com.example.dmaker.dto.DeveloperDto;
-import com.example.dmaker.dto.EditDeveloper;
+import com.example.dmaker.dto.*;
+import com.example.dmaker.exception.DMakerException;
 import com.example.dmaker.service.DeveloperService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -29,6 +29,9 @@ public class DMakerController {
     // 불필요한 정보가 나갈 수 있고, 트랜잭션이 없는 상태에서 접근 시 문제가 발생할 수 있다.
     // entity 와 응답 데이터를 분리해주는 것이 좋다.
     public List<DeveloperDto> getAllDevelopers() {
+
+        // 예전에는 이런 컨트롤러 안에서 비즈니스 로직을 통해 예외처리를 하였다.
+        // 하지만 가능하면 컨트롤러단에선 불필요한 비즈니스 로직은 피하는게 좋다.
 
         log.info("GET /developers HTTP/1.1");
 
@@ -65,6 +68,22 @@ public class DMakerController {
         return developerService.deleteDeveloper(memberId);
     }
 
+
+    // 과거엔 try - catch 를 한 메소드에 전부 쓰는 방식을 사용했었다..
+    // (매우 불편, 외부 api와 연동할 때 호출하는 곳에서 예상치 못한 예외가 발생할 수 있어서 부분적으로 필요할 떄도 있다.)
+    // 해당 컨트롤러에서 발생하는 에러를 한번에 제어 (컨트롤러 단위)
+//    @ExceptionHandler(DMakerException.class) // 해당 에러가 발생하면 처리
+//    @ResponseStatus(value = HttpStatus.CONFLICT) // 응답 상태코드를 바꿔 내려줄 수도 있다.
+//    public DMakerErrorResponse handleException(DMakerException e, HttpServletRequest request) {
+//
+//        log.error("errorCode : {}, url : {}, message : {}", e.getDMakerErrorCode(), request.getRequestURL(), e.getDetailMessage());
+//
+//        return DMakerErrorResponse.builder()
+//                .errorCode(e.getDMakerErrorCode())
+//                .errorMessage(e.getDetailMessage())
+//                .build();
+//    }
+    
 }
 
 /*

@@ -116,6 +116,10 @@ public class DeveloperService {
         Integer experienceYears = request.getExperienceYears();
 
         validateDeveloperLevel(developerLevel, experienceYears);
+        
+        // 과거에는 이런 예외를 던지는 방식이 아닌 boolean 을 리턴 후 메소드에서 따로 에러 응답을 내려주는 형태였다.
+        // 즉, 에러 관련 정보를 넘기고 넘기는 구조
+        // 이 방식은 복잡하고, 유지보수가 불편하며 재사용성이 떨어져서 좋지 않음
 
         developerRepository.findByMemberId(request.getMemberId())
                 .ifPresent(developer -> {
@@ -132,6 +136,8 @@ public class DeveloperService {
         developerRepository.findByMemberId(memberId).orElseThrow(() -> new DMakerException(NO_DEVELOPER));
     }
 
+    // 코드를 길게 짜면서 예외에 대한 상황을 처리할 고민 없이
+    // 예외 발생 시 그냥 던진 후 전역 처리를 통해 좀 더 간결하고 편한 프로그래밍을 할 수 있다.
     private void validateDeveloperLevel(DeveloperLevel developerLevel, Integer experienceYears) {
         if (developerLevel == DeveloperLevel.SENIOR && experienceYears < 10) {
             throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
