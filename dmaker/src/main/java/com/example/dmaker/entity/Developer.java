@@ -1,6 +1,7 @@
 package com.example.dmaker.entity;
 
 import com.example.dmaker.code.StatusCode;
+import com.example.dmaker.dto.CreateDeveloper;
 import com.example.dmaker.util.DeveloperLevel;
 import com.example.dmaker.util.DeveloperSkill;
 import lombok.*;
@@ -47,4 +48,16 @@ public class Developer {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+//    public static Developer from(CreateDeveloper.Request request) {
+//        return Developer.builder()
+//                .developerLevel(request.getDeveloperLevel())
+//                .developerSkill(request.getDeveloperSkill())
+//                .experienceYears(request.getExperienceYears())
+//                .memberId(request.getMemberId())
+//                .statusCode(StatusCode.EMPLOYED)
+//                .name(request.getName())
+//                .age(request.getAge())
+//                .build();
+//    }
 }

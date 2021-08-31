@@ -19,6 +19,7 @@ public class CreateDeveloper {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @ToString
     public static class Request {
         @NotNull
         private DeveloperLevel developerLevel;
@@ -51,7 +52,7 @@ public class CreateDeveloper {
         private String memberId;
 
         // entity 로 부터 Response 객체 생성
-        public static Response fromEntity(Developer developer) {
+        public static Response fromEntity(@NonNull Developer developer) {
             return Response.builder()
                     .developerSkill(developer.getDeveloperSkill())
                     .developerLevel(developer.getDeveloperLevel())

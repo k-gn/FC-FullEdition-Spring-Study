@@ -1,3 +1,6 @@
+# 프로그램이 뜰 때 이곳에 여러 설정값들을 application context 쪽에 넘겨주며,
+# 설정에 맞게 동작을 시켜준다. 이 때 설정을 불러들이는 것을 ResourceLoader 가 수행한다.
+# ResourceLoader 는 여러 설정값이나 필요한 값을 불러와서 프로그램을 동작할 수 있는 상태로 만들어준다.
 spring:
   h2:
     console:
@@ -8,3 +11,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+developer:
+  level:
+    min:
+      senior: 12

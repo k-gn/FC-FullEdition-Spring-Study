@@ -17,21 +17,24 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-// junit 에서 제공하는 검증 방법
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.dmaker.constant.DMakerConstant.MAX_JUNIOR_EXPERIENCE_YEARS;
+import static com.example.dmaker.constant.DMakerConstant.MIN_SENIOR_EXPERIENCE_YEARS;
 import static com.example.dmaker.util.DeveloperLevel.JUNIOR;
 import static com.example.dmaker.util.DeveloperLevel.SENIOR;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+// junit : 자바 진영의 단위 테스트 프레임워크
 // context = 문맥, 어플리케이션이 돌아가는 설정값과 빈을 담는 곳, 동작하기 위한 전략을 세우는 부분
 //@SpringBootTest // 진짜 실행과 동일한 환경, 테스트 시 테스트 컨텍스트에 모든 빈을 로딩한 환경 (통합 테스트)
 @ExtendWith(MockitoExtension.class) // mockito 기능을 활용하기 위한 확장
@@ -58,14 +61,21 @@ class DeveloperServiceTest {
             .age(32)
             .build();
 
-    private final CreateDeveloper.Request request = CreateDeveloper.Request.builder()
-            .developerLevel(SENIOR)
-            .developerSkill(DeveloperSkill.BACK_END)
-            .experienceYears(12)
-            .memberId("memberId")
-            .name("name")
-            .age(32)
-            .build();
+    private CreateDeveloper.Request getCreateRequest(
+            DeveloperLevel developerLevel,
+            DeveloperSkill developerSkill,
+            Integer experienceYears
+    ) {
+
+        return CreateDeveloper.Request.builder()
+                .developerLevel(developerLevel)
+                .developerSkill(developerSkill)
+                .experienceYears(experienceYears)
+                .memberId("memberId")
+                .name("name")
+                .age(32)
+                .build();
+    }
 
     @Test
     public void testSomething() {
@@ -78,7 +88,7 @@ class DeveloperServiceTest {
         // Mocking 으로 해결 가능
         // 단위 테스트를 작성할 때 외부에 의존하는 부분을 임의의 가짜로 대체하는 기법이 자주 사용되는데 이를 모킹(mocking)이라고 한다.
         // 다시 말해, 모킹(mocking)은 외부 서비스에 의존하지 않고 독립적으로 실행이 가능한 단위 테스트를 작성하기 위해서 사용되는 테스팅 기법
-        developerService.createDeveloper(request);
+        developerService.createDeveloper(getCreateRequest(SENIOR, DeveloperSkill.BACK_END, MIN_SENIOR_EXPERIENCE_YEARS + 1));
         List<DeveloperDto> allEmployedDevelopers = developerService.getAllEmployedDevelopers();
         System.out.println(allEmployedDevelopers);
 
@@ -100,9 +110,13 @@ class DeveloperServiceTest {
 
     @Test
     void createDeveloperTest_success() {
-        // given (mocking)
+        // given (mocking), 가짜 객체를 사용할 때 반드시 모킹해줘야 한다.
+        // 만약 선언했는데 쓰이지 않는 mocking 일 경우 에러가 발생
         given(developerRepository.findByMemberId(anyString()))
                 .willReturn(Optional.empty());
+
+        given(developerRepository.save(any()))
+                .willReturn(developer);
 
         // Mock 객체가 어떤 동작을 할 때 파라미터로 받은 값을 캡쳐 (검증에 활용 가능)
         // 실제로 사용되는 파라미터 값을 확인할 수 있고, 외부 API 호출 시 날라가는 데이터를 확인할 수 있다.
@@ -111,7 +125,7 @@ class DeveloperServiceTest {
                 ArgumentCaptor.forClass(Developer.class);
 
         // when (동작과 결과 받기)
-        CreateDeveloper.Response developer = developerService.createDeveloper(request);
+        developerService.createDeveloper(getCreateRequest(SENIOR, DeveloperSkill.BACK_END, MIN_SENIOR_EXPERIENCE_YEARS + 1));
 
         // then (검증)
         verify(developerRepository, times(1)) // 특정 Mock 의 호출 횟수 검증
@@ -119,7 +133,6 @@ class DeveloperServiceTest {
 
         Developer savedDeveloper = captor.getValue();
         assertEquals(SENIOR, savedDeveloper.getDeveloperLevel());
-        assertEquals(JUNIOR, savedDeveloper.getDeveloperLevel());
     }
 
     @Test
@@ -133,7 +146,7 @@ class DeveloperServiceTest {
         // when (동작과 결과 받기)
         // then (검증)
         DMakerException dMakerException = assertThrows(DMakerException.class,
-                () -> developerService.createDeveloper(request));
+                () -> developerService.createDeveloper(getCreateRequest(SENIOR, DeveloperSkill.BACK_END, 12)));
         assertEquals(DMakerErrorCode.DUPLICATED_MEMBER_ID, dMakerException.getDMakerErrorCode());
     }
 }

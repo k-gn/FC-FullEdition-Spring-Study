@@ -11,7 +11,9 @@ import com.example.dmaker.repository.RetiredDeveloperRepository;
 import com.example.dmaker.util.DeveloperLevel;
 import com.example.dmaker.exception.DMakerException;
 import com.example.dmaker.repository.DeveloperRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +22,16 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.dmaker.constant.DMakerConstant.MAX_JUNIOR_EXPERIENCE_YEARS;
+import static com.example.dmaker.constant.DMakerConstant.MIN_SENIOR_EXPERIENCE_YEARS;
 import static com.example.dmaker.exception.DMakerErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
 public class DeveloperService {
+
+    @Value("${developer.level.min.senior}")
+    private final Integer minSeniorYears;
 
     private final DeveloperRepository developerRepository;
     private final RetiredDeveloperRepository retiredDeveloperRepository;
@@ -37,29 +44,23 @@ public class DeveloperService {
     // Durability - 영속성 - 성공적으로 수행된 트랜잭션(커밋)은 영원히 반영
     // auto commit 되거나 직접 한번에 commit 할 수 있다.
     // 스프링에서 트랜잭션은 어노테이션으로 쓸 때 AOP 기반으로 동작함 (TransactionInterceptor - invoke)
-    @Transactional
-    public CreateDeveloper.Response createDeveloper(CreateDeveloper.Request request) {
+    // 메소드가 실행 되기 전에 트랜잭션을 생성 또는 참여 -> 메소드 호출 -> 정상 실행이면 커밋, 예외 발생 시 정책에 따른 롤백 (AOP Around)
+    @Transactional // Aspect
+    public CreateDeveloper.Response createDeveloper(@NonNull CreateDeveloper.Request request) {
 //        EntityTransaction transaction = em.getTransaction();
 //
 //        try {
 //            transaction.begin();
         
         validateCreateDeveloperRequest(request);
-        
-        
+
         // business login start
-        Developer developer = Developer.builder()
-                .developerLevel(request.getDeveloperLevel())
-                .developerSkill(request.getDeveloperSkill())
-                .experienceYears(request.getExperienceYears())
-                .memberId(request.getMemberId())
-                .statusCode(StatusCode.EMPLOYED)
-                .name(request.getName())
-                .age(request.getAge())
-                .build();
-        developerRepository.save(developer); // 저장, 영속화
-        
-        return CreateDeveloper.Response.fromEntity(developer);
+//        Developer developer = Developer.from(request);
+//        Developer developer = createDeveloperFromRequest(request);
+
+//        developerRepository.save(createDeveloperFromRequest(request)); // 저장, 영속화
+
+        return CreateDeveloper.Response.fromEntity(developerRepository.save(createDeveloperFromRequest(request)));
         
         // business login end
 //            transaction.commit();
@@ -70,34 +71,54 @@ public class DeveloperService {
 
     }
 
+    @Transactional(readOnly = true) // 트랜잭션을 통해 변경 방지
     public List<DeveloperDto> getAllEmployedDevelopers() {
         return developerRepository.findDevelopersByStatusCodeEquals(StatusCode.EMPLOYED).stream()
                 .map(DeveloperDto::fromEntity).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public DeveloperDetailDto getDeveloperDetail(String memberId) {
+//        return developerRepository.findByMemberId(memberId)
+//                .map(DeveloperDetailDto::fromEntity)
+//                .orElseThrow(() -> new DMakerException(NO_DEVELOPER));
+        return DeveloperDetailDto.fromEntity(getDeveloperByMemberId(memberId));
+    }
+
+    // 중복 부분을 메소드 처리
+    private Developer getDeveloperByMemberId(String memberId) {
         return developerRepository.findByMemberId(memberId)
-                .map(DeveloperDetailDto::fromEntity)
                 .orElseThrow(() -> new DMakerException(NO_DEVELOPER));
     }
 
+    // public 메소드엔 큼직큼직한 개념들을 담고, 상세적인 부분은 private 메소드로 빼서 처리한 깔끔한 구조 => 응집도를 높일 수 있다.
+    // 응집도는 한 모듈 내부의 처리 요소들이 서로 관련되어 있는 정도 (모듈에 포함된 내부 요소들이 하나의 책임/ 목적을 위해 연결되어있는 연관된 정도)
+    // 단, private 메소드에 너무나 다양한 기능을 담지말기 (다시 분리)
     @Transactional // dirty checking
     public DeveloperDetailDto editDeveloper(String memberId, EditDeveloper.Request request) {
-        validateEditDeveloperRequest(request, memberId);
+        validateDeveloperLevel(request.getDeveloperLevel(), request.getExperienceYears());
 
-        Developer developer = developerRepository.findByMemberId(memberId).orElseThrow(() -> new DMakerException(NO_DEVELOPER));
+        // 지역변수의 변경으로 문제가 발생할 수 있으니 주의하자
+//        Developer developer = getDeveloperByMemberId(memberId);
 
+//        setDeveloperFromRequest(request, getDeveloperByMemberId(memberId));
+
+        return DeveloperDetailDto.fromEntity(
+                getUpdatedDeveloperFromRequest(request, getDeveloperByMemberId(memberId)));
+    }
+
+    private Developer getUpdatedDeveloperFromRequest(EditDeveloper.Request request, Developer developer) {
         developer.setDeveloperLevel(request.getDeveloperLevel());
         developer.setDeveloperSkill(request.getDeveloperSkill());
         developer.setExperienceYears(request.getExperienceYears());
 
-        return DeveloperDetailDto.fromEntity(developer);
+        return developer;
     }
 
     @Transactional // 추 후 변화 가능성을 생각하면 되도록 붙여주는게 유리하다.
     public DeveloperDetailDto deleteDeveloper(String memberId) {
         // EMPLOYED -> RETIRED
-        Developer developer = developerRepository.findByMemberId(memberId).orElseThrow(() -> new DMakerException(NO_DEVELOPER));
+        Developer developer = getDeveloperByMemberId(memberId);
         developer.setStatusCode(StatusCode.RETIRED);
 
         RetiredDeveloper retiredDeveloper = RetiredDeveloper.builder()
@@ -127,31 +148,42 @@ public class DeveloperService {
                 });
     }
 
-    private void validateEditDeveloperRequest(EditDeveloper.Request request, String memberId) {
-        DeveloperLevel developerLevel = request.getDeveloperLevel();
-        Integer experienceYears = request.getExperienceYears();
-
-        validateDeveloperLevel(developerLevel, experienceYears);
-
-        developerRepository.findByMemberId(memberId).orElseThrow(() -> new DMakerException(NO_DEVELOPER));
-    }
-
     // 코드를 길게 짜면서 예외에 대한 상황을 처리할 고민 없이
     // 예외 발생 시 그냥 던진 후 전역 처리를 통해 좀 더 간결하고 편한 프로그래밍을 할 수 있다.
     private void validateDeveloperLevel(DeveloperLevel developerLevel, Integer experienceYears) {
-        if (developerLevel == DeveloperLevel.SENIOR && experienceYears < 10) {
-            throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
-        }
+        // 숫자(매직넘버)의 상수 또는 enum 처리 (응집도 UP!, 유지보수 UP!)
 
-        if (developerLevel == DeveloperLevel.JUNGNIOR
-                && (experienceYears < 4 || experienceYears > 10)) {
-            throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
-        }
+        developerLevel.validateExperienceYears(experienceYears);
 
-        if (developerLevel == DeveloperLevel.JUNIOR && experienceYears > 4) {
-            throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
-        }
+//        if (experienceYears < developerLevel.getMinExperienceYears() ||
+//                experienceYears > developerLevel.getMaxExperienceYears()) {
+//            throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
+//        }
+
+//        if (developerLevel == DeveloperLevel.SENIOR && experienceYears < MIN_SENIOR_EXPERIENCE_YEARS) {
+//            throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
+//        }
+//
+//        if (developerLevel == DeveloperLevel.JUNGNIOR
+//                && (experienceYears < MAX_JUNIOR_EXPERIENCE_YEARS
+//                || experienceYears > MIN_SENIOR_EXPERIENCE_YEARS)) {
+//            throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
+//        }
+//
+//        if (developerLevel == DeveloperLevel.JUNIOR && experienceYears > MAX_JUNIOR_EXPERIENCE_YEARS) {
+//            throw new DMakerException(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED);
+//        }
     }
 
-
+    public static Developer createDeveloperFromRequest(CreateDeveloper.Request request) {
+        return Developer.builder()
+                .developerLevel(request.getDeveloperLevel())
+                .developerSkill(request.getDeveloperSkill())
+                .experienceYears(request.getExperienceYears())
+                .memberId(request.getMemberId())
+                .statusCode(StatusCode.EMPLOYED)
+                .name(request.getName())
+                .age(request.getAge())
+                .build();
+    }
 }
