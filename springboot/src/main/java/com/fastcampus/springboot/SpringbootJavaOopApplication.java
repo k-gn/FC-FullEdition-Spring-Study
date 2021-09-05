@@ -1,7 +1,9 @@
 package com.fastcampus.springboot;
 
+import com.fastcampus.springboot.domain.Student;
 import com.fastcampus.springboot.logic.BubbleSort;
 import com.fastcampus.springboot.properties.MyProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -16,6 +18,7 @@ import org.springframework.core.env.Environment;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
+//@RequiredArgsConstructor
 @ConfigurationPropertiesScan
 @SpringBootApplication(
 //        exclude = WebMvcAutoConfiguration.class // 자동 설정 제외
