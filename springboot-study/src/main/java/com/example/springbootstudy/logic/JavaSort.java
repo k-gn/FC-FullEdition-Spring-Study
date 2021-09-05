@@ -1,4 +1,4 @@
-package com.fastcampus.springboot.logic;
+package com.example.springbootstudy.logic;
 
 import org.springframework.stereotype.Component;
 

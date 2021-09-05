@@ -1,14 +1,6 @@
-package com.fastcampus.springboot;
+package com.example.springbootstudy;
 
 //import com.fastcampus.springboot.config.Config;
-import com.fastcampus.springboot.logic.BubbleSort;
-import com.fastcampus.springboot.logic.Sort;
-import com.fastcampus.springboot.service.SortService;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.util.Arrays;
-
 //public class Main {
 //    public static void main(String[] args) {
 //

@@ -1,10 +1,10 @@
-package com.fastcampus.springboot.properties;
+package com.example.springbootstudy.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
-import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties("my") // 이 방법을 권장
+//@ConfigurationProperties("my") // 이 방법을 권장
+@ConfigurationProperties("my")
 @ConstructorBinding // 생성자 주입
 //@Configuration // ConfigurationPropertiesScan 존재 시 생략 가능
 public class MyProperties {

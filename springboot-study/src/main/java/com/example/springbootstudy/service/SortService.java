@@ -1,7 +1,6 @@
-package com.fastcampus.springboot.service;
+package com.example.springbootstudy.service;
 
-import com.fastcampus.springboot.logic.JavaSort;
-import com.fastcampus.springboot.logic.Sort;
+import com.example.springbootstudy.logic.Sort;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
