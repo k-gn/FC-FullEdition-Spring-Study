@@ -1,0 +1,16 @@
+# 디버그나 endpoints 설정은 개발 종료 시 반드시 보안과 성능을 위해 지워야 한다.
+# 스프링은 Actuator를 이용해서 애플리케이션 상태를 종합적으로 모니터링할 수 있다.
+debug: true
+# actuator 사용 시 모든 endpoints 관찰, (http://localhost:8080/actuator)
+# endpoint : 메소드는 같은 URL들에 대해서도 다른 요청을 하게끔 구별하게 해주는 항목 (API가 서버에서 자원(resource)에 접근할 수 있도록 하는 URL)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+# 스프링이 만들어주는 기본 에러페이지(whitelabel) 끄기
+server:
+  error:
+    whitelabel:
+      enabled: false
+#    path: # 기본 에러 컨트롤러 path 수정 가능
