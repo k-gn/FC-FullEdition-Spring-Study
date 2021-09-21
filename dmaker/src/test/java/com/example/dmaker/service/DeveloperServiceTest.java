@@ -48,7 +48,7 @@ class DeveloperServiceTest {
     private RetiredDeveloperRepository retiredDeveloperRepository;
 
 //    @Autowired
-    @InjectMocks // 생성 시 위에 가짜 객체를 자동으로 주입
+    @InjectMocks // 생성 시 위에 가짜 객체를 자동으로 주입 후 생성
     private DeveloperService developerService;
 
     private final Developer developer = Developer.builder()

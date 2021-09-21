@@ -13,4 +13,8 @@ server:
   error:
     whitelabel:
       enabled: false
+# 더 많은 에러 정보를 확인할 수 있다. (기본적으론 꺼져있다 = 시스템 정보 유출을 조심)
+#    include-exception: true
+#    include-message: always
+#    include-stacktrace: always
 #    path: # 기본 에러 컨트롤러 path 수정 가능
