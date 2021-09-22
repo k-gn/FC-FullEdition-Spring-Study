@@ -17,4 +17,5 @@ public class Admin {
 
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+
 }

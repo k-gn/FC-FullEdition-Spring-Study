@@ -19,13 +19,17 @@ repositories {
 }
 
 dependencies {
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     // 기본적으로 톰캣이 내장되어 있어서 jsp를 사용할 수 있지만 설정하기 불편, 템플릿 엔진을 의존성 추가해서 사용하는게 맘 편하다.
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
+//    runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
+//    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

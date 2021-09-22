@@ -2,6 +2,7 @@ package com.example.getinline.controller.api;
 
 import com.example.getinline.constant.ErrorCode;
 import com.example.getinline.constant.PlaceType;
+import com.example.getinline.dto.PlaceRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,11 @@ class APIPlaceControllerTest {
         this.mvc = mvc;
         this.mapper = mapper;
     }
+
+    // 테스트의 구조
+    // Given : 상태의 정의 - 테스트 수행의 전제 조건
+    // When : 동작 - 테스트 실행
+    // Then : 검증 - 동작의 결과(actual) vs 예상값(expected)
 
     @DisplayName("[API][GET] 장소 리스트 조회 - 장소 리스트 데이터를 담은 표준 API 출력")
     @Test
@@ -88,4 +94,73 @@ class APIPlaceControllerTest {
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
     }
+
+    @DisplayName("[API][POST] 장소 생성")
+    @Test
+    void givenPlace_whenCreatingAPlace_thenReturnsSuccessfulStandardResponse() throws Exception {
+        // Given
+        PlaceRequest placeRequest = PlaceRequest.of(
+                PlaceType.COMMON,
+                "랄라배드민턴장",
+                "서울시 강남구 강남대로 1234",
+                "010-1234-5678",
+                30,
+                "신장개업"
+        );
+
+        // When & Then
+        mvc.perform(
+                post("/api/places")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(placeRequest))
+        )
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+    }
+
+    @DisplayName("[API][PUT] 장소 변경")
+    @Test
+    void givenPlace_whenModifyingAPlace_thenReturnsSuccessfulStandardResponse() throws Exception {
+        // Given
+        long placeId = 1L;
+        PlaceRequest placeRequest = PlaceRequest.of(
+                PlaceType.COMMON,
+                "랄라배드민턴장",
+                "서울시 강남구 강남대로 1234",
+                "010-1234-5678",
+                30,
+                "신장개업"
+        );
+
+        // When & Then
+        mvc.perform(
+                put("/api/places/" + placeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(placeRequest))
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+    }
+
+    @DisplayName("[API][DELETE] 장소 삭제")
+    @Test
+    void givenPlace_whenDeletingAPlace_thenReturnsSuccessfulStandardResponse() throws Exception {
+        // Given
+        long placeId = 1L;
+
+        // When & Then
+        mvc.perform(delete("/api/places/" + placeId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+    }
+
 }

@@ -43,7 +43,7 @@ public class BaseExceptionHandler {
         return new ModelAndView("error", Map.of(
                 "statusCode", status.value(),
                 "errorCdoe", errorCode,
-                "message", errorCode.getMessage(status.getReasonPhrase()) // getReasonPhrase() : 상태에 대한 응답 메시지 문자열을 확인
+                "message", errorCode.getMessage(e) // getReasonPhrase() : 상태에 대한 응답 메시지 문자열을 확인
         ), status); // ModelAndView 도 status 값을 가질 수 있다.
     }
 }

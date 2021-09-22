@@ -34,7 +34,6 @@ public enum ErrorCode {
         return this.getMessage(this.getMessage() + " - " + e.getMessage());
     }
     public String getMessage(String message) {
-        System.out.println("message : " + message);
         return Optional.ofNullable(message) // null이 넘어올 경우, NPE를 던지지 않고 Optional.empty()와 동일하게 비어 있는 Optional 객체를 얻어옴
                 // Predicate<T> 함수형 인터페이스 : T ▶ boolean test(T t) ▶ boolean
                 .filter(Predicate.not(String::isBlank)) // 비어있지 않다면, not - 결과를 반전시키는 메서드

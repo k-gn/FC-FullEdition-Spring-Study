@@ -2,7 +2,10 @@ package com.example.getinline.controller.api;
 
 import com.example.getinline.constant.PlaceType;
 import com.example.getinline.dto.APIDataResponse;
+import com.example.getinline.dto.PlaceRequest;
 import com.example.getinline.dto.PlaceResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +16,7 @@ public class APIPlaceController {
 
     @GetMapping("/places")
     public APIDataResponse<List<PlaceResponse>> getPlaces() {
+//        throw new HttpRequestMethodNotSupportedException("HttpRequestMethodNotSupportedException");
         return APIDataResponse.of(List.of(PlaceResponse.of(
                 PlaceType.COMMON,
                 "랄라배드민턴장",
@@ -23,9 +27,10 @@ public class APIPlaceController {
         )));
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/places")
-    public Boolean createPlace() {
-        return true;
+    public APIDataResponse<Void> createPlace(@RequestBody PlaceRequest placeRequest) {
+        return APIDataResponse.empty();
     }
 
     @GetMapping("/places/{placeId}")
@@ -45,12 +50,16 @@ public class APIPlaceController {
     }
 
     @PutMapping("/places/{placeId}")
-    public Boolean modifyPlace(@PathVariable Integer placeId) {
-        return true;
+    public APIDataResponse<Void> modifyPlace(
+            @PathVariable Long placeId,
+            @RequestBody PlaceRequest placeRequest
+    ) {
+        return APIDataResponse.empty();
     }
 
     @DeleteMapping("/places/{placeId}")
-    public Boolean removePlace(@PathVariable Integer placeId) {
-        return true;
+    public APIDataResponse<Void> removePlace(@PathVariable Long placeId) {
+        return APIDataResponse.empty();
     }
+
 }
