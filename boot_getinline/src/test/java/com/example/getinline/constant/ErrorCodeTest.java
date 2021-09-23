@@ -16,8 +16,8 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 class ErrorCodeTest {
 
     @DisplayName("예외를 받으면, 예외 메시지가 포함된 메시지 출력")
-    @MethodSource // test method 실행 당 복잡한 인수 를 전달할 때 사용하는 방법
     @ParameterizedTest(name = "[{index}] {0} ===> {1}") // 하나의 테스트 메소드로 여러 개의 파라미터에 대해서 테스트
+    @MethodSource // test method 실행 당 복잡한 인수 를 전달할 때 사용하는 방법
     void givenExceptionWithMessage_whenGettingMessage_thenReturnsMessage(ErrorCode sut, String expected) {
         // Given
         Exception e = new Exception("This is test message.");
@@ -29,7 +29,8 @@ class ErrorCodeTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    static Stream<Arguments> givenExceptionWithMessage_whenGettingMessage_thenReturnsMessage() {
+    // 동일한 반복 테스트 코드를 해결할 기법
+    static Stream<Arguments> givenExceptionWithMessage_whenGettingMessage_thenReturnsMessage() { // 테스트 메소드와 동일한 메소드명으로 지정
         return Stream.of(
                 arguments(ErrorCode.OK, "Ok - This is test message."),
                 arguments(ErrorCode.BAD_REQUEST, "Bad request - This is test message."),

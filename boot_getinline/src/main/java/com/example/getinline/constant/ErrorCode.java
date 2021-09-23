@@ -31,6 +31,7 @@ public enum ErrorCode {
 
     // 사용자 정의 에러 메시지
     public String getMessage(Throwable e) {
+        // error code message + actual error message
         return this.getMessage(this.getMessage() + " - " + e.getMessage());
     }
     public String getMessage(String message) {

@@ -32,6 +32,7 @@ public class EventServiceImpl { // implements EventService {
             );
         }
         catch (Exception e) {
+            // 구체적으로 무슨 에러가 발생했는지 명시하고 던지기 - 정보성이 충분해서 바로 알 수 있다.
             throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
         }
     }

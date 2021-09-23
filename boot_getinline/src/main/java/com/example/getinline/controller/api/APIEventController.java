@@ -8,11 +8,20 @@ import com.example.getinline.service.EventServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// @Validated
+// 메소드 파라미터에 직접 애노테이션을 사용한 검증 시 필요
+// ConstraintViolationException 예외를 발생 시킨다. (직접 처리해줘야 하는 예외)
+// @ConfigurationProperties 클래스에도 적용 가능
+@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
@@ -20,10 +29,13 @@ public class APIEventController {
 
     private final EventServiceImpl eventService;
 
+    // validation : 애노테이션 기반으로 데이터 검증을 돕는 방식이 도입됨
+    // 검증 구현과 비즈니스 로직을 분리하고, 비즈니스 로직에 더 집중 가능
+    // 간결하고 가독성이 좋음
     @GetMapping("/events")
     public APIDataResponse<List<EventResponse>> getEvents(
-            Long placeId,
-            String eventName,
+            @Positive Long placeId, // 양수인지?
+            @Size(min = 2) String eventName, // 최소 2글자 인지?
             EventStatus eventStatus,
             // String 으로 들어간 LocalDateTime 값을 변환시켜줌
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDatetime,
@@ -46,16 +58,19 @@ public class APIEventController {
         return APIDataResponse.of(eventResponses);
     }
 
+    // @Valid
+    // 검증하려는 데이터 오브젝트에 검증 로직을 적용할 때
+    // MethodArgumentNotValidException 예외 발생 (ResponseEntityExceptionHandler 지원을 받을 수 있다.)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
-    public APIDataResponse<String> createEvent(@RequestBody EventRequest eventRequest) {
+    public APIDataResponse<String> createEvent(@Valid @RequestBody EventRequest eventRequest) {
         boolean result = eventService.createEvent(eventRequest.toDTO());
 
         return APIDataResponse.of(Boolean.toString(result));
     }
 
     @GetMapping("/events/{eventId}")
-    public APIDataResponse<EventResponse> getEvent(@PathVariable Long eventId) {
+    public APIDataResponse<EventResponse> getEvent(@Positive @PathVariable Long eventId) {
 //        if (eventId.equals(2L)) {
 //            return APIDataResponse.empty();
 //        }
@@ -77,15 +92,15 @@ public class APIEventController {
 
     @PutMapping("/events/{eventId}")
     public APIDataResponse<String> modifyEvent(
-            @PathVariable Long eventId,
-            @RequestBody EventRequest eventRequest
+            @Positive @PathVariable Long eventId,
+            @Valid @RequestBody EventRequest eventRequest
     ) {
         boolean result = eventService.modifyEvent(eventId, eventRequest.toDTO());
         return APIDataResponse.of(Boolean.toString(result));
     }
 
     @DeleteMapping("/events/{eventId}")
-    public APIDataResponse<String> removeEvent(@PathVariable Long eventId) {
+    public APIDataResponse<String> removeEvent(@Positive @PathVariable Long eventId) {
         boolean result = eventService.removeEvent(eventId);
 
         return APIDataResponse.of(Boolean.toString(result));

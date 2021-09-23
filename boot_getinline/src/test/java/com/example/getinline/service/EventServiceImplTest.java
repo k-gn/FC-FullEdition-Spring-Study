@@ -97,15 +97,16 @@ class EventServiceImplTest {
     void givenDataRelatedException_whenSearchingEvents_thenThrowsGeneralException() {
         // Given
         RuntimeException e = new RuntimeException("This is test.");
-        given(eventRepository.findEvents(any(), any(), any(), any(), any())).willThrow(e);
+        given(eventRepository.findEvents(any(), any(), any(), any(), any())).willThrow(e); // checked exception 은 사용할 수 없다.
 
         // When
+        // 발생하는 예외를 잡기
         Throwable thrown = catchThrowable(() -> sut.getEvents(null, null, null, null, null));
 
         // Then
         assertThat(thrown)
                 .isInstanceOf(GeneralException.class)
-                .hasMessageContaining(ErrorCode.DATA_ACCESS_ERROR.getMessage());
+                .hasMessageContaining(ErrorCode.DATA_ACCESS_ERROR.getMessage(e));
         then(eventRepository).should().findEvents(any(), any(), any(), any(), any());
     }
 

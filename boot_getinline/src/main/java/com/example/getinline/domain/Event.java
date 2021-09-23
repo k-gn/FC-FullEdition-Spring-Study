@@ -14,8 +14,8 @@ public class Event {
     private EventStatus eventStatus;
     private LocalDateTime eventStartDatetime;
     private LocalDateTime eventEndDatetime;
-    private Integer currentNumberOfPeople;
-    private Integer capacity;
+    private Integer currentNumberOfPeople; // 현재 사람 수
+    private Integer capacity; // 최대 수용 인원
     private String memo;
 
     private LocalDateTime createdAt;

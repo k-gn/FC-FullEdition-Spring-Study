@@ -13,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice(annotations = RestController.class) // @ControllerAdvice + @ResponseBody
 public class APIExceptionHandler extends ResponseEntityExceptionHandler { // Spring MVC에서 기본으로 제공되는 Exception들의 처리를 간단하게 등록
@@ -33,30 +34,33 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler { // Spr
 //                .body(APIErrorResponse.of(false, errorCode, errorCode.getMessage(e)));
 
         // 이미 구현된 메소드를 사용 (형식을 통일)
-        return super.handleExceptionInternal(e,
-                APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage(e)),
-                HttpHeaders.EMPTY, status, request);
+        return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, status, request);
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> exception(Exception e, WebRequest request) {
-        ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-//        return ResponseEntity
-//                .status(status)
-//                .body(APIErrorResponse.of(false, errorCode, errorCode.getMessage(e)));
+        return handleExceptionInternal(e, ErrorCode.INTERNAL_ERROR, HttpHeaders.EMPTY, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
 
-        return super.handleExceptionInternal(e,
-                APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage(e)),
-                HttpHeaders.EMPTY, status, request);
+    @ExceptionHandler
+    public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
+        return handleExceptionInternal(e, ErrorCode.VALIDATION_ERROR, HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST, request);
     }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         // 동작은 똑같은데 요지는 body 만 넣어주면 되는 것!
         ErrorCode errorCode = status.is4xxClientError() ? ErrorCode.SPRING_BAD_REQUEST : ErrorCode.SPRING_INTERNAL_ERROR;
-        return super.handleExceptionInternal(ex,
-                APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage(ex)),
-                headers, status, request);
+        return handleExceptionInternal(ex, errorCode, headers, status, request);
+    }
+
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return super.handleExceptionInternal(
+                e,
+                APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage(e)),
+                headers,
+                status,
+                request
+        );
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
+// 예외 처리 관심사 분리
 // @ExceptionHandler 를 모아서 (전역)글로벌하게 적용할 때 쓰는 애노테이션
 // # 속성
 // value == basePackages

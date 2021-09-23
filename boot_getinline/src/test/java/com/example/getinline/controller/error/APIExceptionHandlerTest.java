@@ -39,13 +39,13 @@ class APIExceptionHandlerTest {
         ConstraintViolationException e = new ConstraintViolationException(Set.of());
 
         // When
-//        ResponseEntity<Object> response = sut.validation(e, webRequest);
+        ResponseEntity<Object> response = sut.validation(e, webRequest);
 
         // Then
-//        assertThat(response)
-//                .hasFieldOrPropertyWithValue("body", APIErrorResponse.of(false, ErrorCode.VALIDATION_ERROR, e))
-//                .hasFieldOrPropertyWithValue("headers", HttpHeaders.EMPTY)
-//                .hasFieldOrPropertyWithValue("statusCode", HttpStatus.BAD_REQUEST);
+        assertThat(response)
+                .hasFieldOrPropertyWithValue("body", APIErrorResponse.of(false, ErrorCode.VALIDATION_ERROR, e))
+                .hasFieldOrPropertyWithValue("headers", HttpHeaders.EMPTY)
+                .hasFieldOrPropertyWithValue("statusCode", HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("프로젝트 일반 오류 - 응답 데이터 정의")
