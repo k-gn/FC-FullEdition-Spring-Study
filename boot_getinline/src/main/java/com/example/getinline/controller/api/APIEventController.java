@@ -6,6 +6,7 @@ import com.example.getinline.dto.EventRequest;
 import com.example.getinline.dto.EventResponse;
 import com.example.getinline.service.EventServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class APIEventController {
 
     private final EventServiceImpl eventService;
@@ -64,6 +66,7 @@ public class APIEventController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
     public APIDataResponse<String> createEvent(@Valid @RequestBody EventRequest eventRequest) {
+        log.debug("입력 값 : {}", eventRequest);
         boolean result = eventService.createEvent(eventRequest.toDTO());
 
         return APIDataResponse.of(Boolean.toString(result));

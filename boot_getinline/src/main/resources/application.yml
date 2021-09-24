@@ -1,6 +1,23 @@
 # 디버그나 endpoints 설정은 개발 종료 시 반드시 보안과 성능을 위해 지워야 한다.
+debug: false
+#trace: false
+# 로깅 레벨 범위를 지정 (패키지별)
+logging:
+  level:
+    com:
+      example:
+        getinline: debug
+    # API 호출 과정을 로그로 관찰
+    org:
+      springframework:
+        web:
+          servlet: debug
+# 로깅 정책을 FILE 로 할 경우 rollingpolicy 설정
+#  logback:
+#    rollingpolicy:
+#      file-name-pattern:
+
 # 스프링은 Actuator를 이용해서 애플리케이션 상태를 종합적으로 모니터링할 수 있다.
-debug: true
 # actuator 사용 시 모든 endpoints 관찰, (http://localhost:8080/actuator)
 # endpoint : 메소드는 같은 URL들에 대해서도 다른 요청을 하게끔 구별하게 해주는 항목 (API가 서버에서 자원(resource)에 접근할 수 있도록 하는 URL)
 management:
@@ -8,6 +25,8 @@ management:
     web:
       exposure:
         include: "*"
+
+# server
 # 스프링이 만들어주는 기본 에러페이지(whitelabel) 끄기
 server:
   error:
@@ -18,3 +37,69 @@ server:
 #    include-message: always
 #    include-stacktrace: always
 #    path: # 기본 에러 컨트롤러 path 수정 가능
+# 이 외에도 http encoding, session, ssl, tomcat 등 다양한 설정 가능
+
+# thymeleaf
+spring:
+  thymeleaf:
+    cache: false # 변경마다 결과를 바로 보기위해 캐시 끄기
+  thymeleaf3:
+    decoupled-logic: true
+# banner
+# resouces 하위에 banner.txt 등록
+# 실행 시 스프링 로고를 설정
+#spring:
+#  banner:
+#    charset:
+
+# main
+#spring:
+#  main:
+#    banner-mode: off
+#    lazy-initialization: # 모든 빈 등록을 실제 사용 시로 미룬다.
+
+# json
+# json 관련 설정 (jackson, gson)
+#spring:
+#  jackson:
+#    date-format:
+
+# web
+#spring:
+#  hateoas:
+#    use-hal-as-default-json-media-type: # hal+json을 기본값으로 지정할지 (default true)
+#  mvc:
+#    format:
+#      date-time: iso-offset
+#    view:
+#      prefix:
+#    converters
+#      preferred-json-mapper # jackson or gson 선택
+
+# multipart
+# 파일 다루는 설정
+#spring:
+#  servlet:
+#    multipart:
+#      enabled:
+
+# config
+#---
+# 작업 할 때 다양한 테스트를 위해 여러가지 환경을 둔다.
+# 각 환경마다 다른 프로퍼티 설정을 할 수 있다.
+# --- 로 분리
+#spring:
+#  config:
+#    activate:
+#      on-profile: alpha
+    # 여러 프로퍼티를 여러 파일로 만든 후 import 가능
+#    import:
+    # 과거 버전 설정을 그대로 인식
+#    use-legacy-processing:
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: beta
+
+# security, actuator, devtools 등 다양한 프로퍼티 설정들이 존재한다.

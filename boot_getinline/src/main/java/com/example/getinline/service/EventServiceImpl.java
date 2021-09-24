@@ -6,6 +6,7 @@ import com.example.getinline.dto.EventDTO;
 import com.example.getinline.exception.GeneralException;
 import com.example.getinline.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EventServiceImpl { // implements EventService {
 
     // Repository 를 사용해 데이터를 가져오는 책임을 서비스에서 분리
@@ -23,6 +25,7 @@ public class EventServiceImpl { // implements EventService {
     public List<EventDTO> getEvents(Long placeId, String eventName, EventStatus eventStatus, LocalDateTime eventStartDatetime, LocalDateTime eventEndDatetime) {
 
         try {
+            log.debug("관찰 - placeId : {}", placeId);
             return eventRepository.findEvents(
                     placeId,
                     eventName,
