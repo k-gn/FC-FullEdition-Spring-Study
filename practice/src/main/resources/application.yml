@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/practice?serverTimezone=Asia/Seoul
+    username: test
+    password: 1234
+
+  thymeleaf:
+    cache: false
+
+  mybatis:
+    type-aliases-package: com.example.practice.dto
+    mapper-locations: mapper/**/*.xml
+
+  pagehelper:
+    helper-dialect: mariadb
+    reasonable: true # 범위를 넘어가는 pageNum 일 경우 가능한 값으로 바꿔준다.
+
+debug: true
+logging:
+  level:
+    root: INFO
+    sql: ERROR
