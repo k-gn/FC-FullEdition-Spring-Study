@@ -8,13 +8,13 @@ spring:
   thymeleaf:
     cache: false
 
-  mybatis:
-    type-aliases-package: com.example.practice.dto
-    mapper-locations: mapper/**/*.xml
+mybatis:
+  type-aliases-package: com.example.practice.dto
+  mapper-locations: mapper/**/*.xml
 
-  pagehelper:
-    helper-dialect: mariadb
-    reasonable: true # 범위를 넘어가는 pageNum 일 경우 가능한 값으로 바꿔준다.
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true # 범위를 넘어가는 pageNum 일 경우 가능한 값으로 바꿔준다.
 
 debug: true
 logging:
