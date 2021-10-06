@@ -3,6 +3,63 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper>
+<mapper namespace="com.example.practice.repository.AniRepository">
+
+    <resultMap id="aniMap" type="Ani">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="genre" column="genre"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="aniMap">
+        SELECT
+            *
+        FROM
+            ani
+    </select>
+
+    <select id="findById" resultMap="aniMap">
+        SELECT
+            *
+        FROM
+            ani
+        WHERE
+            id = #{id}
+    </select>
+
+    <select id="findByTitle" resultMap="aniMap">
+        SELECT
+            *
+        FROM
+            ani
+        WHERE
+            title = #{title}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            ani(title, content, genre)
+        VALUES
+            (#{title}, #{content}, #{genre})
+    </insert>
+
+    <update id="update">
+        UPDATE
+            ani
+        SET
+            title = #{title}, content = #{content}, genre = #{genre}
+        WHERE
+            id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM
+            ani
+        WHERE
+            id = #{id}
+    </delete>
 
 </mapper>

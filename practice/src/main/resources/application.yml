@@ -9,15 +9,18 @@ spring:
     cache: false
 
 mybatis:
-  type-aliases-package: com.example.practice.dto
+  type-aliases-package: com.example.practice.model
   mapper-locations: mapper/**/*.xml
+
 
 pagehelper:
   helper-dialect: mysql
   reasonable: true # 범위를 넘어가는 pageNum 일 경우 가능한 값으로 바꿔준다.
 
-debug: true
 logging:
   level:
     root: INFO
     sql: ERROR
+
+server:
+  port: 9000

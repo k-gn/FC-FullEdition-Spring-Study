@@ -21,6 +21,9 @@ public class Order {
 
     private String info;
 
+    private Member member;
+    private Ani ani;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

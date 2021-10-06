@@ -3,6 +3,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper>
+<mapper namespace="com.example.practice.repository.MemberRespository">
+
+    <resultMap id="memberMap" type="Member">
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
+        <result property="auth" column="auth"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+        <collection property="orderList" resultMap="orderMap"/>
+    </resultMap>
+
+    <resultMap id="orderMap" type="Order">
+        <id property="id" column="id"/>
+        <result property="aid" column="ani_id"/>
+        <result property="mid" column="member_id"/>
+        <result property="info" column="info"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="memberMap">
+        SELECT * FROM member m LEFT JOIN orders o ON m.id = o.member_id
+    </select>
+
+    <select id="findById" resultMap="memberMap">
+        SELECT * FROM member m LEFT JOIN orders o ON m.id = o.member_id WHERE m.id = #{id}
+    </select>
+
+    <select id="findByEmail" resultMap="memberMap">
+        SELECT * FROM member WHERE email = #{email}
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+
+    </insert>
+
+    <update id="update">
+
+    </update>
+
+    <delete id="delete">
+
+    </delete>
 
 </mapper>
