@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
@@ -18,11 +19,15 @@ public class MemberDto {
 
     private Long id;
 
+    @NotBlank
     private String email;
 
+    @NotBlank
     private String password;
 
     private Auth auth;
+
+    private boolean check;
 
     private List<Order> orderList;
 

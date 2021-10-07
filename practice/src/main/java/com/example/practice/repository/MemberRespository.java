@@ -2,6 +2,7 @@ package com.example.practice.repository;
 
 import com.example.practice.model.Member;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +17,11 @@ public interface MemberRespository {
     List<Member> findAll();
     
     // 회원 조회
-    Member findById(Long id);
+    Optional<Member> findById(Long id);
     Member findByEmail(String email);
 
     // 회원 정보 수정
-    Long update(Long id, Member member);
+    Long update(Member member);
 
     // 회원 삭제
     Long delete(Long id);

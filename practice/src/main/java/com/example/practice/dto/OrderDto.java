@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,10 +18,13 @@ public class OrderDto {
 
     private Long id;
 
+    @NotBlank
     private Long aid;
 
+    @NotBlank
     private Long mid;
 
+    @NotBlank
     private String info; // email + title
 
     public static Order dtoToEntity(OrderDto dto) {

@@ -26,16 +26,14 @@ class AniServiceImplTest {
                         .build()
         );
 
-        Long id2 = aniService.save(
-                AniDto.builder()
-                        .title("title")
-                        .content("content")
-                        .genre(Genre.SPORTS)
-                        .build()
-        );
+//        Long id2 = aniService.save(
+//                AniDto.builder()
+//                        .title("title")
+//                        .content("content")
+//                        .genre(Genre.SPORTS)
+//                        .build()
+//        );
 
-        System.out.println(id1);
-        System.out.println(id2);
 //        assertThat(id).isEqualTo(3L);
     }
 
@@ -48,5 +46,19 @@ class AniServiceImplTest {
     void findById() {
         AniDto ani = aniService.findById(1L);
         System.out.println(ani);
+    }
+
+    @Test
+    void update() {
+        aniService.update(1L, AniDto.builder()
+                .title("UPDATE title")
+                .content("content")
+                .genre(Genre.SPORTS)
+                .build());
+    }
+
+    @Test
+    void delete() {
+        aniService.delete(1L);
     }
 }

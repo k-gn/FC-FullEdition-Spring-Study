@@ -22,5 +22,7 @@ logging:
     root: INFO
     sql: ERROR
 
+
 server:
   port: 9000
+debug: true

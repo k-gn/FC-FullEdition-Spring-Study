@@ -8,6 +8,7 @@
     <resultMap id="memberMap" type="Member">
         <id property="id" column="id"/>
         <result property="email" column="email"/>
+        <result property="password" column="password"/>
         <result property="auth" column="auth"/>
         <result property="createdAt" column="createdAt"/>
         <result property="updatedAt" column="updatedAt"/>
@@ -36,15 +37,16 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-
+        INSERT INTO member(email, password, auth)
+        VALUES (#{email}, #{password}, #{auth})
     </insert>
 
     <update id="update">
-
+        UPDATE member SET email = #{email}, password = #{password} WHERE id = #{id}
     </update>
 
     <delete id="delete">
-
+        DELETE FROM member WHERE id = #{id}
     </delete>
 
 </mapper>

@@ -4,6 +4,8 @@ import com.example.practice.dto.APIDataResponse;
 import com.example.practice.dto.OrderDto;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/orders")
 public class APIOrderController {
@@ -19,12 +21,12 @@ public class APIOrderController {
     }
 
     @PostMapping
-    public APIDataResponse<?> register(OrderDto orderDto) {
+    public APIDataResponse<?> register(@Valid OrderDto orderDto) {
         return null;
     }
 
     @PutMapping("/{id}")
-    public APIDataResponse<?> modify(@PathVariable Long id, OrderDto orderDto) {
+    public APIDataResponse<?> modify(@PathVariable Long id, @Valid OrderDto orderDto) {
         return null;
     }
 

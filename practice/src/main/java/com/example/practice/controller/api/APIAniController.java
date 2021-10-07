@@ -4,6 +4,8 @@ import com.example.practice.dto.APIDataResponse;
 import com.example.practice.dto.AniDto;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/anies")
 public class APIAniController {
@@ -19,12 +21,12 @@ public class APIAniController {
     }
 
     @PostMapping
-    public APIDataResponse<?> register(AniDto aniDto) {
+    public APIDataResponse<?> register(@Valid AniDto aniDto) {
         return null;
     }
 
     @PutMapping("/{id}")
-    public APIDataResponse<?> modify(@PathVariable Long id, AniDto aniDto) {
+    public APIDataResponse<?> modify(@PathVariable Long id, @Valid AniDto aniDto) {
         return null;
     }
 

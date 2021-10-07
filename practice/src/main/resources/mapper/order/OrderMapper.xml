@@ -34,23 +34,28 @@
     </resultMap>
 
     <select id="findAll">
-
+        SELECT * FROM orders o
+            LEFT JOIN member m ON o.member_id = m.id
+            LEFT JOIN ani a ON o.ani_id = a.id
     </select>
 
     <select id="findById">
-
+        SELECT * FROM orders o
+            LEFT JOIN member m ON o.member_id = m.id
+            LEFT JOIN ani a ON o.ani_id = a.id
+        WHERE o.id = #{id}
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-
+        INSERT INTO orders(ani_id, member_id, info) VALUES (#{aid}, #{mid}, #{info})
     </insert>
 
     <update id="update">
-
+        UPDATE orders SET info = #{info} WHERE id = #{id}
     </update>
 
     <delete id="delete">
-
+        DELETE FROM orders WHERE id = #{id}
     </delete>
 
 </mapper>

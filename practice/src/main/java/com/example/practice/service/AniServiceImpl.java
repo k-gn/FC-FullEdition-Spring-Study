@@ -7,6 +7,7 @@ import com.example.practice.repository.AniRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,15 +28,15 @@ public class AniServiceImpl implements AniService {
 
     @Override
     public AniDto findById(Long id) {
-
-        return aniRepository.findById(id)
-                .map(entity -> AniDto.entityToDto(entity))
-                .orElseThrow(() -> new GeneralException("해당 애니메이션이 없습니다."));
+        Ani ani = aniRepository.findById(id).orElseThrow(() -> new GeneralException("없는 애니메이션 입니다."));
+        return AniDto.entityToDto(ani);
     }
 
     @Override
     public AniDto findByTitle(String title) {
-        return null;
+        Ani ani = aniRepository.findByTitle(title);
+        if (ani == null) throw new GeneralException("없는 애니메이션 입니다.");
+        return AniDto.entityToDto(ani);
     }
 
     @Override
@@ -48,7 +49,8 @@ public class AniServiceImpl implements AniService {
     @Override
     public Long update(Long id, AniDto aniDto) {
         Ani ani = AniDto.dtoToEntity(aniDto);
-        return aniRepository.update(id, ani);
+        ani.setId(id);
+        return aniRepository.update(ani);
     }
 
     @Override

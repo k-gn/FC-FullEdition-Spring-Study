@@ -2,11 +2,18 @@ package com.example.practice.controller.api;
 
 import com.example.practice.dto.APIDataResponse;
 import com.example.practice.dto.MemberDto;
+import com.example.practice.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/members")
+@RequiredArgsConstructor
 public class APIMemberController {
+
+    private final MemberService memberService;
 
     @GetMapping
     public APIDataResponse<?> findAll() {
@@ -18,13 +25,8 @@ public class APIMemberController {
         return null;
     }
 
-    @PostMapping
-    public APIDataResponse<?> register(MemberDto memberDto) {
-        return null;
-    }
-
     @PutMapping("/{id}")
-    public APIDataResponse<?> modify(@PathVariable Long id, MemberDto memberDto) {
+    public APIDataResponse<?> modify(@PathVariable Long id, @Valid MemberDto memberDto) {
         return null;
     }
 
