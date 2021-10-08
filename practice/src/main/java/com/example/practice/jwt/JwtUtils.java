@@ -32,11 +32,11 @@ public class JwtUtils {
      * PAYLOAD : sub, iat, exp
      * SIGNATURE : JwtKey.getRandomKey로 구한 Secret Key로 HS512 해시
      *
-     * @param user 유저
+     * @param member 유저
      * @return jwt token
      */
-    public static String createToken(Member user) {
-        Claims claims = Jwts.claims().setSubject(user.getEmail()); // subject
+    public static String createToken(Member member) {
+        Claims claims = Jwts.claims().setSubject(member.getEmail()); // subject
         Date now = new Date(); // 현재 시간
         Pair<String, Key> key = JwtKey.getRandomKey();
         // JWT Token 생성

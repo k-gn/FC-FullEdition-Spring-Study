@@ -1,5 +1,9 @@
 package com.example.practice.config;
 
+import com.example.practice.jwt.JwtAuthenticationFilter;
+import com.example.practice.jwt.JwtAuthorizationFilter;
+import com.example.practice.jwt.JwtProperties;
+import com.example.practice.repository.MemberRespository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -19,10 +25,20 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final MemberRespository memberRespository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().disable();
+
+        // jwt filter
+        http.addFilterBefore(
+                new JwtAuthenticationFilter(this.authenticationManager()),
+                UsernamePasswordAuthenticationFilter.class
+        ).addFilterBefore( // 체이닝 가능
+                new JwtAuthorizationFilter(memberRespository),
+                BasicAuthenticationFilter.class
+        );
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -35,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .loginPage("/login")
                 .usernameParameter("email")
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/", true)
                 .permitAll()
         ;
 
@@ -43,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
+                .deleteCookies(JwtProperties.COOKIE_NAME);
         ;
     }
 

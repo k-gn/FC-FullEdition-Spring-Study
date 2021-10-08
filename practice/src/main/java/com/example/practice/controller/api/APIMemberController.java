@@ -17,21 +17,25 @@ public class APIMemberController {
 
     @GetMapping
     public APIDataResponse<?> findAll() {
-        return null;
+
+        return APIDataResponse.of(memberService.findAll());
     }
 
     @GetMapping("/{id}")
     public APIDataResponse<?> findById(@PathVariable Long id) {
-        return null;
+
+        return APIDataResponse.of(memberService.findById(id));
     }
 
     @PutMapping("/{id}")
     public APIDataResponse<?> modify(@PathVariable Long id, @Valid MemberDto memberDto) {
-        return null;
+        memberService.update(id, memberDto);
+        return APIDataResponse.empty();
     }
 
     @DeleteMapping("/{id}")
     public APIDataResponse<?> remove(@PathVariable Long id) {
-        return null;
+        memberService.delete(id);
+        return APIDataResponse.empty();
     }
 }

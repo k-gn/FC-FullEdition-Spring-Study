@@ -20,8 +20,6 @@ public class PrincipalDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRespository.findByEmail(username);
-        System.out.println(member);
-        System.out.println("PrincipalDetailsService");
         if (member == null) throw new GeneralException("없는 회원입니다.");
         return new PrincipalDetails(member);
     }

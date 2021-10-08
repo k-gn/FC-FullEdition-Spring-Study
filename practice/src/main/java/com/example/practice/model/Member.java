@@ -25,6 +25,8 @@ public class Member {
 
     private Auth auth;
 
+    private String provider;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
