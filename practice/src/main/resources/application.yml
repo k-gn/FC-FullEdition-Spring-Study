@@ -13,8 +13,8 @@ spring:
       client:
         registration: # facebook, google oauth2 로그인은 스프링이 지원한다.
           google:
-            client-id: 844524611459-4lplfhjsbv8tg6f2legoqrklmjrdt5ah.apps.googleusercontent.com
-            client-secret: GbVCY6GIK8xdPTOzEXLH0JFS
+            client-id: 747568455864-q13aefprpei0agrfd5qc5teqsob1qv3i.apps.googleusercontent.com
+            client-secret: e1gJU847D641mnB7pGYzsnaN
             scope:
               - email
               - profile

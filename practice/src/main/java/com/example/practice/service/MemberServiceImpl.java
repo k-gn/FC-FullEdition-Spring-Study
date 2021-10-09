@@ -27,6 +27,7 @@ public class MemberServiceImpl implements MemberService {
         String encPwd = passwordEncoder.encode(member.getPassword());
         member.setPassword(encPwd);
         member.setAuth(memberDto.isCheck() ? Auth.ROLE_ADMIN : Auth.ROLE_USER);
+        member.setProvider("home");
 
         memberRespository.save(member);
 

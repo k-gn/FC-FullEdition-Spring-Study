@@ -27,6 +27,8 @@ public class MemberDto {
 
     private Auth auth;
 
+    private String provider;
+
     private boolean check;
 
     private List<Order> orderList;
@@ -45,6 +47,7 @@ public class MemberDto {
                 .id(member.getId())
                 .email(member.getEmail())
                 .auth(member.getAuth())
+                .provider(member.getProvider())
                 .orderList(member.getOrderList())
                 .build();
     }

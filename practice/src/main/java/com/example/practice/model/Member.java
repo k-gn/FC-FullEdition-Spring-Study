@@ -27,6 +27,8 @@ public class Member {
 
     private String provider;
 
+    private String refreshValue;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

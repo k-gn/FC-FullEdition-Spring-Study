@@ -19,7 +19,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/member")
-    public String index() {
+    public String index(int id) {
+        System.out.println(id);
         return "/member/index";
     }
 

@@ -10,6 +10,8 @@
         <result property="email" column="email"/>
         <result property="password" column="password"/>
         <result property="auth" column="auth"/>
+        <result property="provider" column="provider"/>
+        <result property="refreshValue" column="refresh_value"/>
         <result property="createdAt" column="createdAt"/>
         <result property="updatedAt" column="updatedAt"/>
         <collection property="orderList" resultMap="orderMap"/>
@@ -36,13 +38,21 @@
         SELECT * FROM member WHERE email = #{email}
     </select>
 
+    <select id="findByRefreshValue" resultMap="memberMap">
+        SELECT * FROM member WHERE refresh_value = #{refreshValue}
+    </select>
+
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO member(email, password, auth)
-        VALUES (#{email}, #{password}, #{auth})
+        INSERT INTO member(email, password, auth, provider)
+        VALUES (#{email}, #{password}, #{auth}, #{provider})
     </insert>
 
     <update id="update">
         UPDATE member SET email = #{email}, password = #{password} WHERE id = #{id}
+    </update>
+
+    <update id="updateRefresh">
+        UPDATE member SET refresh_value = #{refreshValue} WHERE email = #{email}
     </update>
 
     <delete id="delete">

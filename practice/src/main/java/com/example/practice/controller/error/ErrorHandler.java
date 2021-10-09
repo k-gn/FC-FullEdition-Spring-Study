@@ -1,42 +1,50 @@
 package com.example.practice.controller.error;
 
 import com.example.practice.constant.ErrorCode;
+import com.example.practice.controller.error.exception.CustomException;
 import com.example.practice.controller.error.exception.GeneralException;
+import com.example.practice.dto.APIErrorResponse;
 import com.example.practice.util.Script;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Map;
 
+@RestController
 @ControllerAdvice
 public class ErrorHandler {
 
-    // GeneralException 전용
-    @ExceptionHandler
-    public ModelAndView general(GeneralException e) {
+    @ExceptionHandler(GeneralException.class)
+    public ResponseEntity<Object> general(GeneralException e) {
         ErrorCode errorCode = e.getErrorCode();
         HttpStatus status = errorCode.isClientSideError() ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR;
-        return new ModelAndView("error", Map.of(
-                "statusCode", status.value(),
-                "errorCdoe", errorCode,
-                "message", errorCode.getMessage(e)
-        ), status);
+        return ResponseEntity
+                .status(status)
+                .body(APIErrorResponse.of(false, errorCode, errorCode.getMessage(e)));
     }
 
+    @ExceptionHandler(BindException.class)
+    public String validation(BindException e) {
+        return Script.back("입력값이 올바르지 않습니다.");
+    }
 
-    // 그 외 예상치 못한 모든 에러를 처리 (INTERNAL_ERROR 로 간주)
-    @ExceptionHandler
-    public ModelAndView exception(Exception e) {
+    @ExceptionHandler(CustomException.class)
+    public String confirm(CustomException e) {
+        return Script.confirm(e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> exception(Exception e) {
         ErrorCode errorCode = ErrorCode.INTERNAL_ERROR;
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        return new ModelAndView("error", Map.of(
-                "statusCode", status.value(),
-                "errorCdoe", errorCode,
-                "message", errorCode.getMessage(e)
-        ), status);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(APIErrorResponse.of(false, errorCode, errorCode.getMessage(e)));
     }
 }

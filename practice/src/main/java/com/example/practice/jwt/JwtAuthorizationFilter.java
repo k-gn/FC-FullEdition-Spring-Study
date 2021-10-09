@@ -38,17 +38,24 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     ) throws IOException, ServletException {
 
         String token = null;
+        String refreshToken = null;
         try {
             // cookie 에서 JWT token을 가져옵니다.
             token = Arrays.stream(request.getCookies())
                     .filter(cookie -> cookie.getName().equals(JwtProperties.COOKIE_NAME)).findFirst()
                     .map(Cookie::getValue)
                     .orElse(null);
+
+            refreshToken = Arrays.stream(request.getCookies())
+                    .filter(cookie -> cookie.getName().equals(JwtProperties.REFRESH_COOKIE_NAME)).findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
         } catch (Exception ignored) {
         }
-        if (token != null) {
-            System.out.println("JwtAuthorizationFilter");
+
+        if (token != null && JwtUtils.validateToken(token)) {
             try {
+                System.out.println("authToken auth");
                 // authentication 을 만들어서 SecurityContext에 넣어준다.
                 Authentication authentication = this.getUsernamePasswordAuthenticationToken(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -57,6 +64,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 Cookie cookie = new Cookie(JwtProperties.COOKIE_NAME, null);
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
+            }
+        }else {
+            Member member = memberRespository.findByRefreshValue(refreshToken);
+            if(refreshToken != null && JwtUtils.validateToken(refreshToken) && member != null) {
+                System.out.println("refreshToken auth");
+                token = JwtUtils.createToken(member.getEmail());
+                // 쿠키 생성
+                Cookie cookie = new Cookie(JwtProperties.COOKIE_NAME, token);
+                cookie.setMaxAge(JwtProperties.EXPIRATION_TIME); // 쿠키의 만료시간 설정
+                cookie.setPath("/"); // 전송 범위
+
+                response.addCookie(cookie);
+
+                Authentication authentication = this.getUsernamePasswordAuthenticationToken(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
         chain.doFilter(request, response);

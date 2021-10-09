@@ -1,5 +1,6 @@
 package com.example.practice.config.auth;
 
+import com.example.practice.controller.error.exception.CustomException;
 import com.example.practice.controller.error.exception.GeneralException;
 import com.example.practice.model.Member;
 import com.example.practice.repository.MemberRespository;
@@ -20,7 +21,7 @@ public class PrincipalDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRespository.findByEmail(username);
-        if (member == null) throw new GeneralException("없는 회원입니다.");
+        if (member == null) return null;
         return new PrincipalDetails(member);
     }
 }

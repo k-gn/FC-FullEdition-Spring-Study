@@ -1,75 +1,37 @@
-package com.example.practice.jwt;
+package com.example.practice.config.oauth;
 
 import com.example.practice.config.auth.PrincipalDetails;
+import com.example.practice.jwt.JwtProperties;
+import com.example.practice.jwt.JwtUtils;
 import com.example.practice.repository.MemberRespository;
-import com.example.practice.util.Script;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 
-/**
- * JWT를 이용한 로그인 인증
- */
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final AuthenticationManager authenticationManager;
     private final RequestCache requestCache;
     private final MemberRespository memberRespository;
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, RequestCache requestCache, MemberRespository memberRespository) {
-        super(authenticationManager);
-        this.authenticationManager = authenticationManager;
+    public OAuth2SuccessHandler(RequestCache requestCache, MemberRespository memberRespository) {
         this.requestCache = requestCache;
         this.memberRespository = memberRespository;
     }
 
-    /**
-     * 로그인 인증 시도
-     */
     @Override
-    public Authentication attemptAuthentication(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws AuthenticationException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        // 로그인할 때 입력한 username과 password를 가지고 authenticationToken를 생성한다.
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                request.getParameter("email"),
-                request.getParameter("password"),
-                new ArrayList<>()
-        );
-        return authenticationManager.authenticate(authenticationToken);
-    }
-
-    /**
-     * 인증에 성공했을 때 사용
-     * JWT Token을 생성해서 쿠키에 넣는다.
-     */
-    @Override
-    protected void successfulAuthentication(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain chain,
-            Authentication authResult
-    ) throws IOException, ServletException {
-
-        PrincipalDetails principal = (PrincipalDetails) authResult.getPrincipal();
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         String authToken = JwtUtils.createToken(principal.getMember().getEmail());
         String refreshToken = JwtUtils.createRefreshToken();
         makeAuthCookie(response, authToken);
