@@ -3,6 +3,7 @@ package com.example.practice.jwt;
 import com.example.practice.config.auth.PrincipalDetails;
 import com.example.practice.repository.MemberRespository;
 import com.example.practice.util.Script;
+import com.example.practice.util.Success;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -69,12 +70,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Authentication authResult
     ) throws IOException, ServletException {
 
-        PrincipalDetails principal = (PrincipalDetails) authResult.getPrincipal();
-        String authToken = JwtUtils.createToken(principal.getMember().getEmail());
-        String refreshToken = JwtUtils.createRefreshToken();
-        makeAuthCookie(response, authToken);
-        makeRefreshCookie(response, refreshToken);
-        memberRespository.updateRefresh(refreshToken, principal.getMember().getEmail());
+        Success.success(request, response, authResult, memberRespository);
 
         SavedRequest savedRequest = requestCache.getRequest(request, response);
         if(savedRequest != null){

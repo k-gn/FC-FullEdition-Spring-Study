@@ -4,6 +4,7 @@ import com.example.practice.config.auth.PrincipalDetails;
 import com.example.practice.jwt.JwtProperties;
 import com.example.practice.jwt.JwtUtils;
 import com.example.practice.repository.MemberRespository;
+import com.example.practice.util.Success;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -31,12 +32,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        String authToken = JwtUtils.createToken(principal.getMember().getEmail());
-        String refreshToken = JwtUtils.createRefreshToken();
-        makeAuthCookie(response, authToken);
-        makeRefreshCookie(response, refreshToken);
-        memberRespository.updateRefresh(refreshToken, principal.getMember().getEmail());
+        Success.success(request, response, authentication, memberRespository);
 
         SavedRequest savedRequest = requestCache.getRequest(request, response);
         if(savedRequest != null){
@@ -44,21 +40,5 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }else{
             redirectStrategy.sendRedirect(request, response, "/");
         }
-    }
-
-    private void makeAuthCookie(HttpServletResponse response, String token) {
-        // 쿠키 생성
-        Cookie authCookie = new Cookie(JwtProperties.COOKIE_NAME, token);
-        authCookie.setMaxAge(JwtProperties.EXPIRATION_TIME); // 쿠키의 만료시간 설정
-        authCookie.setPath("/"); // 전송 범위
-        response.addCookie(authCookie);
-    }
-
-    private void makeRefreshCookie(HttpServletResponse response, String token) {
-        // 쿠키 생성
-        Cookie refreshCookie = new Cookie(JwtProperties.REFRESH_COOKIE_NAME, token);
-        refreshCookie.setMaxAge(JwtProperties.REFRESH_EXPIRATION_TIME); // 쿠키의 만료시간 설정
-        refreshCookie.setPath("/"); // 전송 범위
-        response.addCookie(refreshCookie);
     }
 }
