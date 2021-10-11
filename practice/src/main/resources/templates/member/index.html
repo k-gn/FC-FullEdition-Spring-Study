@@ -7,6 +7,60 @@
 <header th:insert="fragments.html::nav"></header>
 <div class="container">
     <h1>회원</h1>
+
+    <button onclick="iamport()">결제하기</button>
 </div>
 </body>
+<script>
+
+    function iamport() {
+        //가맹점 식별코드
+        IMP.init('imp33857367');
+        IMP.request_pay({
+            pg: 'tosstest',
+            pay_method: 'card',
+            merchant_uid: 'merchant_' + new Date().getTime(),
+            name: '상품1', //결제창에서 보여질 이름
+            amount: 100, //실제 결제되는 가격
+            buyer_email: 'iamport@siot.do',
+            buyer_name: '구매자이름',
+            buyer_tel: '010-1234-5678',
+            buyer_addr: '서울 강남구 도곡동',
+            buyer_postcode: '123-456'
+        }, rsp => { // callback
+            if (rsp.success) { // 결제 성공 시: 결제 승인 또는 가상계좌 발급에 성공한 경우
+                console.log(rsp);
+                let token = $("meta[name='_csrf']").attr("content");
+                let header = $("meta[name='_csrf_header']").attr("content");
+
+                $.ajaxSetup({
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, token);
+                    }
+                });
+
+                const payment = {
+                    imp_uid: rsp.imp_uid,
+                    merchant_uid: rsp.merchant_uid
+                }
+
+                $.ajax({
+                    url: "/payments/complete",
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data: JSON.stringify(payment)
+                }).done(res => {
+                    console.log(res);
+                }).fail(error => {
+                    console.log(error);
+                });
+
+            } else {
+                alert(`결제에 실패하였습니다. 에러 내용: ${rsp.error_msg}`);
+            }
+        })
+    };
+</script>
 </html>

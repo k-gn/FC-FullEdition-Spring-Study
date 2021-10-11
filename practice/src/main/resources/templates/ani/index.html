@@ -7,6 +7,14 @@
 <header th:insert="fragments.html::nav"></header>
 <div class="container">
     <h1>애니</h1>
+    <form th:action="@{/ani/upload}"  th:method="post" enctype="multipart/form-data">
+        <input type="file" name="file"/>
+        <input type="submit" value="업로드"/>
+    </form>
+    <img th:src=" @{/upload/{path}(path = ${image ?: 'basic.jpg'})}">
+    <p>
+        <span th:text="${image} ?: 'basic.jpg'"/>
+    </p>
 </div>
 </body>
 </html>

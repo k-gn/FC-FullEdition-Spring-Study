@@ -20,11 +20,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
+
+        System.out.println(authException);
+        System.out.println(authException.getMessage());
         // 유효한 자격증명을 제공하지 않고 접근하려 할때 401
-        response.setContentType("text/html; charset=utf-8");
-        PrintWriter out = response.getWriter();
-        out.println("<script> alert('로그인을 다시 해주세요.'); </script>");
-        out.println("<script> location.href='/login'; </script>");
-        out.flush();
+//        response.setContentType("text/html; charset=utf-8");
+//        PrintWriter out = response.getWriter();
+//        out.println("<script> alert('로그인을 다시 해주세요.'); </script>");
+//        out.println("<script> location.href='/login'; </script>");
+//        out.flush();
     }
 }

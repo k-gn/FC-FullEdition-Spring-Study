@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Map;
 
 @Data
-@NoArgsConstructor
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private Member member;

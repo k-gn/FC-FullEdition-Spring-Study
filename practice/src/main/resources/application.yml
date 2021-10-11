@@ -41,7 +41,13 @@ spring:
     multipart:
       enabled: true
       max-file-size: 2MB
-      location: C:\\upload
+
+  main:
+    allow-bean-definition-overriding: true
+
+  messages:
+    basename: messages/message
+    encoding: UTF-8
 
 file:
   path: C:/upload/

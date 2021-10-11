@@ -16,6 +16,8 @@
     rel="stylesheet"
     href="https://use.fontawesome.com/releases/v5.0.6/css/all.css"
   >
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <!-- jQuery -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
   <!-- iamport.payment.js -->
@@ -91,10 +93,49 @@
               로그아웃
             </a>
           </li>
+          <li class="nav-item">
+            <a
+                    class="nav-link active"
+                    sec:authorize="isAuthenticated()"
+                    th:href="@{/ani}"
+            >
+              애니
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+                    class="nav-link active"
+                    sec:authorize="isAuthenticated()"
+                    th:href="@{/member}"
+            >
+              회원
+            </a>
+          </li>
+          <li class="nav-item">
+            [[#{lang}]]:
+            <select id="lang" onchange="changeLangSelect()">
+              <option value="ko" th:selected="${language == 'ko'}">korean</option>
+              <option value="en" th:selected="${language == 'en'}">english</option>
+            </select>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
+  <script>
+    function changeLangSelect() {
+      let lang = $("#lang").val();
+
+      $.ajax({
+        type: "get",
+        url: `/change?lang=${lang}`
+      }).done(res => {
+        self.location.reload();
+      }).fail(error => {
+        console.log(error);
+      })
+    }
+  </script>
 </div>
 </body>
 </html>

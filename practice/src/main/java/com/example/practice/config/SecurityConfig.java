@@ -10,11 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,8 +33,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberRespository memberRespository;
     private final PrincipalOauth2UserService principalOauth2UserService;
+    private final UserDetailsService userDetailsService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -56,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
-                .antMatchers("/", "/home", "/signup").permitAll()
+                .antMatchers("/", "/home", "/signup", "/login").permitAll()
                 .anyRequest().authenticated()
         ;
 
@@ -64,7 +73,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .usernameParameter("email")
                 .defaultSuccessUrl("/", true)
-                .permitAll()
         ;
 
         http.logout()
@@ -86,6 +94,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+        web.ignoring().antMatchers("/upload/**");
+        web.ignoring().antMatchers("/change");
     }
 
     @Bean
